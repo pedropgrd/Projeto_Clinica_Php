@@ -1,0 +1,162 @@
+
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        border: none;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+        text-transform: none;
+        scroll-behavior: smooth;
+    }
+
+:root{
+    --bg-color:#081b29;
+    --second-bg-color : #112e42;
+    --text-color:#ededed;
+    --main-color:#00abf0;
+    --azul2--:#5CB4E6;
+}
+body{
+    background-color: var(--text-color);
+    color:black;
+}
+header{
+    background-color: var(--second-bg-color);
+    color: var(--text-color);
+}
+.all{
+    user-select: none;
+}
+
+.link{
+    user-select: text;
+}
+.azulclr{
+    color: var(--azul1--);
+}
+
+.azulesc{
+    color: var(--azul2--);
+}
+
+.nav-link:hover{
+    color: red;
+}
+
+.botao{
+    margin: auto;
+    justify-content: center;
+    user-select: none;
+    width: 330px;
+    height: 35px;
+    border-radius: 20px;
+    background-color: #5CE1E6;
+}
+
+
+.center{
+    align-self: center;
+    text-align: center;
+}
+.espaco{
+    padding-top: 100px;
+    padding-bottom: 80px;
+    align-self: center;
+    text-align: center;
+}
+
+.foto{
+    margin-left: 80px;
+    border-radius: 14%;
+    width: 380px;
+    /* height: 500px; */
+
+}
+
+.form{
+    padding-top: 60px;
+    text-align: justify;
+    color: var(--azul2--);
+}
+
+.conteudo{
+    text-align: justify;
+    color: var(--azul1--);
+}
+
+.icons{
+    padding: 10px 10px 10px 10px;
+    border-radius: 50%;
+    width:150px;
+}
+.icons2{
+    padding: 10px 10px 10px 10px;
+    border-radius: 50%;
+    width: 200px;
+}
+
+.projeto{
+    margin-top: 30px;
+    padding: 10px 10px 10px 10px;
+    width: 200px;
+}
+
+.textproj{
+    color: white;
+}
+
+.textos{
+    text-align: left;
+    color: white;
+}
+
+.conticon{
+    
+    width:60px;
+}
+
+.conttext{
+    color: white;
+    text-decoration: none;
+}
+
+.marg{
+    margin-bottom: 20px;
+}
+
+/* aaaaaaaa */
+
+.cor__primeira{
+    color: var(--cor-primaria);
+}
+
+.fonte__nav{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.cor__primeira{
+    color: var(--cor-primaria)
+}
+.borda__especial{
+    background-color: var(--cor-primaria);
+    color: var(--cor-secundária);
+}
+.borda__card{
+    border-color: var(--cor-primaria);
+}
+.car-posicao-imagem{
+    object-fit: cover;
+    /* Ob posi mexer a imagem x e y */
+    /* object-position: 0 80%; */
+    height: 200px;
+}
+
+
+.imagem-position{
+    /* Prencher todo o container */
+    object-fit: cover;
+    /* Ob posi mexer a imagem x e y */
+    object-position: 0 80%;
+    height: 400px;
+}
+
