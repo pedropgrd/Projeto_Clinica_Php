@@ -1,44 +1,50 @@
 <?php
-include '../conexao.php';
+include '../conexao.php'; // Inclui o arquivo de conexão com o banco de dados
 
 // Atualização dos Dados
 if (isset($_POST['update'])) {
+    // Recupera os dados enviados pelo formulário de atualização
     $id = $_POST['id_tipo_consulta'];
     $descricao = $_POST['descricao'];
     $preco = $_POST['preco'];
 
+    // Prepara a consulta SQL para atualizar o tipo de consulta
     $sql = "UPDATE tipo_consulta SET descricao=?, preco=? WHERE id_tipo_consulta=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("sdi", $descricao, $preco, $id);
+    $stmt->bind_param("sdi", $descricao, $preco, $id); // Vincula os parâmetros
 
+    // Executa a consulta e fornece feedback ao usuário
     if ($stmt->execute()) {
         echo "<script>alert('Tipo de consulta atualizado com sucesso'); window.location.href='consulta_tipo_consulta.php';</script>";
     } else {
         echo "<script>alert('Erro ao atualizar tipo de consulta: " . $stmt->error . "'); window.location.href='consulta_tipo_consulta.php';</script>";
     }
 
-    $stmt->close();
+    $stmt->close(); // Fecha a declaração
 }
 
 // Exclusão dos Dados
 if (isset($_GET['delete'])) {
+    // Recupera o ID do tipo de consulta a ser excluído
     $id = $_GET['delete'];
 
+    // Prepara a consulta SQL para deletar o tipo de consulta
     $sql = "DELETE FROM tipo_consulta WHERE id_tipo_consulta=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $id); // Vincula o parâmetro
 
+    // Executa a consulta e fornece feedback ao usuário
     if ($stmt->execute()) {
         echo "<script>alert('Tipo de consulta deletado com sucesso'); window.location.href='consulta_tipo_consulta.php';</script>";
     } else {
         echo "<script>alert('Erro ao deletar tipo de consulta: " . $stmt->error . "'); window.location.href='consulta_tipo_consulta.php';</script>";
     }
 
-    $stmt->close();
+    $stmt->close(); // Fecha a declaração
 }
 
 // Filtragem dos Dados
-$search = isset($_GET['search']) ? $_GET['search'] : '';
+$search = isset($_GET['search']) ? $_GET['search'] : ''; // Recupera o valor de busca, se existir
 ?>
 
 <!DOCTYPE html>
@@ -72,13 +78,15 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             </thead>
             <tbody>
                 <?php
+                // Prepara a consulta SQL para selecionar os tipos de consulta filtrados pela descrição
                 $sql = "SELECT * FROM tipo_consulta WHERE descricao LIKE ? ORDER BY descricao ASC";
                 $stmt = $mysqli->prepare($sql);
-                $searchParam = "%$search%";
-                $stmt->bind_param("s", $searchParam);
+                $searchParam = "%$search%"; // Prepara o parâmetro de busca com caracteres curinga
+                $stmt->bind_param("s", $searchParam); // Vincula o parâmetro
                 $stmt->execute();
-                $result = $stmt->get_result();
+                $result = $stmt->get_result(); // Obtém o resultado da consulta
 
+                // Verifica se há resultados e exibe-os
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>";
@@ -86,7 +94,9 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                         echo "<td>" . htmlspecialchars($row["descricao"]) . "</td>";
                         echo "<td>" . htmlspecialchars($row["preco"]) . "</td>";
                         echo "<td>
+                                <!-- Botão para editar -->
                                 <button class='btn btn-primary btn-sm' onclick='editTipoConsulta(" . json_encode($row) . ")'>Editar</button>
+                                <!-- Formulário para deletar -->
                                 <form style='display:inline;' method='get' action='consulta_tipo_consulta.php'>
                                     <input type='hidden' name='delete' value='" . $row["id_tipo_consulta"] . "'>
                                     <button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(\"Tem certeza que deseja deletar este tipo de consulta?\")'>Deletar</button>
@@ -101,9 +111,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             </tbody>
         </table>
 
-
-          <!-- Botões de Ação -->
-          <div class="mb-4">
+        <!-- Botões de Ação -->
+        <div class="mb-4">
             <a href="tipo_consulta.php" class="btn btn-primary">Adicionar Novo Tipo de Consulta</a>
             <a href="tela_funcionario.php" class="btn btn-secondary">Voltar para Tela de Funcionário</a>
         </div>
@@ -126,12 +135,13 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
         </div>
     </div>
     <script>
+        // Função para preencher e mostrar o formulário de edição com os dados do tipo de consulta
         function editTipoConsulta(tipoConsulta) {
             document.getElementById('edit_id_tipo_consulta').value = tipoConsulta.id_tipo_consulta;
             document.getElementById('edit_descricao').value = tipoConsulta.descricao;
             document.getElementById('edit_preco').value = tipoConsulta.preco;
-            document.getElementById('editForm').style.display = 'block';
-            window.scrollTo(0, document.getElementById('editForm').offsetTop);
+            document.getElementById('editForm').style.display = 'block'; // Exibe o formulário de edição
+            window.scrollTo(0, document.getElementById('editForm').offsetTop); // Rola a página para o formulário
         }
     </script>
 </body>

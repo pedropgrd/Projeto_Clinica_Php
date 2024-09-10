@@ -1,15 +1,18 @@
 <?php
-include '../conexao.php';
+include '../conexao.php'; // Inclui o script de conexão com o banco de dados.
 
-// Inicialize variáveis
+// Inicialize variáveis para armazenar informações do agendamento.
 $id_agenda = $id_paciente = $id_dentista = $id_tipo_consulta = $tipo_consulta = $descricao = $realizado = $horario = $dt_agenda = $preco_final_agendamento = '';
 
-// Se for uma edição, preencha os campos com os dados existentes
+// Verifica se um ID de agendamento foi passado na URL.
 if (isset($_GET['id'])) {
     $id_agenda = $_GET['id'];
+    // Consulta o banco de dados para buscar o agendamento com o ID especificado.
     $sql = "SELECT * FROM agendamento WHERE id_agenda = $id_agenda";
     $result = $mysqli->query($sql);
+   
     if ($result->num_rows > 0) {
+        // Preenche as variáveis com os dados do agendamento.
         $row = $result->fetch_assoc();
         $id_paciente = $row['id_paciente'];
         $id_dentista = $row['id_dentista'];
@@ -23,7 +26,7 @@ if (isset($_GET['id'])) {
     }
 }
 
-// Adicionar ou atualizar agendamento
+// Adicionar ou atualizar agendamento com base na presença do ID.
 if (isset($_POST['save'])) {
     $id_paciente = $_POST['id_paciente'];
     $id_dentista = $_POST['id_dentista'];
@@ -35,12 +38,15 @@ if (isset($_POST['save'])) {
     $dt_agenda = $_POST['dt_agenda'];
     $preco_final_agendamento = $_POST['preco_final_agendamento'];
 
+    // Se um ID de agendamento estiver presente, atualiza o registro existente.
     if ($id_agenda) {
         $sql = "UPDATE agendamento SET id_paciente='$id_paciente', id_dentista='$id_dentista', id_tipo_consulta='$id_tipo_consulta', tipo_consulta='$tipo_consulta', descricao='$descricao', realizado='$realizado', horario='$horario', dt_agenda='$dt_agenda', preco_final_agendamento='$preco_final_agendamento' WHERE id_agenda=$id_agenda";
     } else {
+        // Caso contrário, insere um novo registro.
         $sql = "INSERT INTO agendamento (id_paciente, id_dentista, id_tipo_consulta, tipo_consulta, descricao, realizado, horario, dt_agenda, preco_final_agendamento) VALUES ('$id_paciente', '$id_dentista', '$id_tipo_consulta', '$tipo_consulta', '$descricao', '$realizado', '$horario', '$dt_agenda', '$preco_final_agendamento')";
     }
 
+    // Executa a query e exibe uma mensagem de sucesso ou erro.
     if ($mysqli->query($sql) === TRUE) {
         echo "<script>alert('Agendamento salvo com sucesso'); window.location.href='consulta_agendamento.php';</script>";
     } else {
@@ -48,7 +54,7 @@ if (isset($_POST['save'])) {
     }
 }
 
-// Buscar dentistas
+// Buscar dentistas para preencher o dropdown.
 $dentistas = [];
 $sql = "SELECT id_dentista, nome FROM dentista";
 $result = $mysqli->query($sql);
@@ -58,7 +64,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Buscar pacientes
+// Buscar pacientes para preencher o dropdown.
 $pacientes = [];
 $sql = "SELECT id_paciente, nome FROM paciente";
 $result = $mysqli->query($sql);
@@ -68,7 +74,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Buscar tipos de consulta
+// Buscar tipos de consulta para preencher o dropdown.
 $tipos_consulta = [];
 $sql = "SELECT id_tipo_consulta, descricao FROM tipo_consulta";
 $result = $mysqli->query($sql);
@@ -78,21 +84,21 @@ if ($result->num_rows > 0) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
+    
+    <!-- Inclui os arquivos de estilo. -->
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/animate.css">
     <link rel="stylesheet" href="../css/owl.carousel.css">
     <link rel="stylesheet" href="../css/owl.theme.default.min.css">
     <link rel="stylesheet" href="../css/tooplate-style.css">
-
+    
     <title>Cadastro de Agendamento</title>
 </head>
 <body>
@@ -103,6 +109,7 @@ if ($result->num_rows > 0) {
                     <img src="../images/appointment-image.jpg" class="img-responsive" alt="">
                 </div>
                 <div class="col-md-6 col-sm-6">
+                    <!-- Formulário para adicionar ou atualizar um agendamento. -->
                     <form id="appointment-form" role="form" method="post">
                         <div class="section-title wow fadeInUp" data-wow-delay="0.4s" id="news">
                             <h2><?php echo $id_agenda ? 'Editar Agendamento' : 'Novo Agendamento'; ?></h2>
@@ -149,16 +156,15 @@ if ($result->num_rows > 0) {
                                 </select>
                             </div>
 
+                            <!-- Campos adicionais -->
                             <div class="col-md-6 col-sm-6">
-                                <label for="tipo_consulta">observação</label>
+                                <label for="tipo_consulta">Observação</label>
                                 <input type="text" class="form-control" id="tipo_consulta" name="tipo_consulta" value="<?php echo $tipo_consulta; ?>" required>
                             </div>
                             <div class="col-md-6 col-sm-6">
                                 <label for="descricao">Descrição</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao" value="<?php echo $descricao; ?>" required>
                             </div>
-
-                            <!-- Campo "Realizado" atualizado -->
                             <div class="col-md-6 col-sm-6">
                                 <label for="realizado">Realizado</label>
                                 <select class="form-select" id="realizado" name="realizado" required>
@@ -166,7 +172,6 @@ if ($result->num_rows > 0) {
                                     <option value="N" <?php echo $realizado == 'N' ? 'selected' : ''; ?>>Não</option>
                                 </select>
                             </div>
-
                             <div class="col-md-6 col-sm-6">
                                 <label for="horario">Horário</label>
                                 <input type="time" class="form-control" id="horario" name="horario" value="<?php echo $horario; ?>" required>
@@ -176,14 +181,15 @@ if ($result->num_rows > 0) {
                                 <input type="date" class="form-control" id="dt_agenda" name="dt_agenda" value="<?php echo $dt_agenda; ?>" required>
                             </div>
                             <div class="col-md-6 col-sm-6">
-                                <label for="preco_final_agendamento">Preço </label>
-                                <input type="number" step="0.01" class="form-control" id="preco_final_agendamento" name="preco_final_agendamento" value="<?php echo $preco_final_agendamento; ?>" >
+                                <label for="preco_final_agendamento">Preço</label>
+                                <input type="number" step="0.01" class="form-control" id="preco_final_agendamento" name="preco_final_agendamento" value="<?php echo $preco_final_agendamento; ?>">
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <button type="submit" class="form-control" id="save" name="save">Salvar</button>
                             </div>
                         </div>
                     </form>
+                    <!-- Botões para consultar agendamento e voltar -->
                     <form method="get" action="consulta_agendamento.php">
                         <button type="submit" class="form-control">Consultar Agendamento</button>
                     </form>
@@ -194,6 +200,7 @@ if ($result->num_rows > 0) {
             </div>
         </div>
     </section>
+    <!-- Inclui o arquivo de script do Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
