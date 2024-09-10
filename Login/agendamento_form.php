@@ -150,7 +150,7 @@ if ($result->num_rows > 0) {
                             </div>
 
                             <div class="col-md-6 col-sm-6">
-                                <label for="tipo_consulta">Tipo de Consulta (Descrição)</label>
+                                <label for="tipo_consulta">observação</label>
                                 <input type="text" class="form-control" id="tipo_consulta" name="tipo_consulta" value="<?php echo $tipo_consulta; ?>" required>
                             </div>
                             <div class="col-md-6 col-sm-6">
@@ -176,8 +176,8 @@ if ($result->num_rows > 0) {
                                 <input type="date" class="form-control" id="dt_agenda" name="dt_agenda" value="<?php echo $dt_agenda; ?>" required>
                             </div>
                             <div class="col-md-6 col-sm-6">
-                                <label for="preco_final_agendamento">Preço Final</label>
-                                <input type="number" step="0.01" class="form-control" id="preco_final_agendamento" name="preco_final_agendamento" value="<?php echo $preco_final_agendamento; ?>" required>
+                                <label for="preco_final_agendamento">Preço </label>
+                                <input type="number" step="0.01" class="form-control" id="preco_final_agendamento" name="preco_final_agendamento" value="<?php echo $preco_final_agendamento; ?>" >
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <button type="submit" class="form-control" id="save" name="save">Salvar</button>

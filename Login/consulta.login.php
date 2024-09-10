@@ -1,60 +1,67 @@
 <?php
+// Inclui o arquivo de conexão com o banco de dados
 include '../conexao.php';
 
 // Atualização dos Dados
-if (isset($_POST['update'])) {
-    $id = $_POST['id'];
-    $nome = $_POST['name'];
-    $email = $_POST['email'];
+if (isset($_POST['update'])) { 
+    $id = $_POST['id']; 
+    $nome = $_POST['name']; 
+    $email = $_POST['email']; 
     $cpf = $_POST['cpf'];
-    $senha = $_POST['senha'];
-    $admin = $_POST['admin'];
+    $senha = $_POST['senha']; 
+    $admin = $_POST['admin']; 
 
-    // Atualizar na tabela de usuários
+    // Atualiza os dados na tabela de usuários
     $sql = "UPDATE usuarios SET cpf=?, senha=?, admin=? WHERE id_usuario=?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("sssi", $cpf, $senha, $admin, $id);
+    $stmt = $mysqli->prepare($sql); // Prepara a query SQL
+    $stmt->bind_param("sssi", $cpf, $senha, $admin, $id); // Vincula os parâmetros
 
-    if ($stmt->execute()) {
-        if ($_POST['cargo'] == "Dentista") {
+    if ($stmt->execute()) { // Executa a query
+        // Atualiza dados específicos de dentistas ou secretárias
+        if ($_POST['cargo'] == "Dentista") { // Verifica o cargo
             $sql = "UPDATE dentista SET nome=?, email=? WHERE id_dentista=?";
-            $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("ssi", $nome, $email, $id);
-            $stmt->execute();
-        } elseif ($_POST['cargo'] == "Funcionario") {
+            $stmt = $mysqli->prepare($sql); // Prepara a query SQL para dentistas
+            $stmt->bind_param("ssi", $nome, $email, $id); // Vincula os parâmetros
+            $stmt->execute(); // Executa a query
+        } elseif ($_POST['cargo'] == "Funcionario") { // Verifica o cargo
             $sql = "UPDATE secretaria SET nome=?, email=? WHERE id_secretaria=?";
-            $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("ssi", $nome, $email, $id);
-            $stmt->execute();
+            $stmt = $mysqli->prepare($sql); // Prepara a query SQL para secretárias
+            $stmt->bind_param("ssi", $nome, $email, $id); // Vincula os parâmetros
+            $stmt->execute(); // Executa a query
         }
 
+        // Mensagem de sucesso e redirecionamento
         echo "<script>alert('Registro atualizado com sucesso'); window.location.href='consulta.login.php';</script>";
     } else {
+        // Mensagem de erro e redirecionamento
         echo "<script>alert('Erro ao atualizar registro: " . $stmt->error . "'); window.location.href='consulta.login.php';</script>";
     }
 
-    $stmt->close();
+    $stmt->close(); // Fecha o statement
 }
 
 // Exclusão dos Dados
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
+if (isset($_GET['delete'])) { // Verifica se a solicitação de exclusão foi feita
+    $id = $_GET['delete']; // Obtém o ID do usuário a ser excluído
 
+    // Deleta o usuário da tabela
     $sql = "DELETE FROM usuarios WHERE id_usuario=?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt = $mysqli->prepare($sql); // Prepara a query SQL
+    $stmt->bind_param("i", $id); // Vincula o parâmetro
 
-    if ($stmt->execute()) {
+    if ($stmt->execute()) { // Executa a query
+        // Mensagem de sucesso e redirecionamento
         echo "<script>alert('Registro deletado com sucesso'); window.location.href='consulta.login.php';</script>";
     } else {
+        // Mensagem de erro e redirecionamento
         echo "<script>alert('Erro ao deletar registro: " . $stmt->error . "'); window.location.href='consulta.login.php';</script>";
     }
 
-    $stmt->close();
+    $stmt->close(); // Fecha o statement
 }
 
 // Filtragem dos Dados
-$search = isset($_GET['search']) ? $_GET['search'] : '';
+$search = isset($_GET['search']) ? $_GET['search'] : ''; // Obtém o termo de busca, se houver
 ?>
 
 <!DOCTYPE html>
@@ -90,6 +97,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             </thead>
             <tbody>
                 <?php
+                // Consulta SQL para obter os dados dos usuários com base na busca
                 $sql = "SELECT u.id_usuario, u.cpf, u.senha, u.cargo, u.admin, 
                                COALESCE(d.nome, s.nome) AS nome, 
                                COALESCE(d.email, s.email) AS email
@@ -98,14 +106,14 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                         LEFT JOIN secretaria s ON u.id_secretaria = s.id_secretaria
                         WHERE d.nome LIKE ? OR s.nome LIKE ? OR u.cpf LIKE ?
                         ORDER BY nome ASC";
-                $stmt = $mysqli->prepare($sql);
-                $searchParam = "%$search%";
-                $stmt->bind_param("sss", $searchParam, $searchParam, $searchParam);
-                $stmt->execute();
-                $result = $stmt->get_result();
+                $stmt = $mysqli->prepare($sql); // Prepara a query SQL
+                $searchParam = "%$search%"; // Adiciona os % para a busca parcial
+                $stmt->bind_param("sss", $searchParam, $searchParam, $searchParam); // Vincula os parâmetros
+                $stmt->execute(); // Executa a query
+                $result = $stmt->get_result(); // Obtém o resultado da query
 
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
+                if ($result->num_rows > 0) { // Verifica se há resultados
+                    while ($row = $result->fetch_assoc()) { // Itera sobre os resultados
                         echo "<tr>";
                         echo "<td>" . htmlspecialchars($row["id_usuario"]) . "</td>";
                         echo "<td>" . htmlspecialchars($row["nome"]) . "</td>";
@@ -172,6 +180,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
     </div>
 
     <script>
+        // Função para preencher o formulário de edição com os dados do usuário
         function editUser(user) {
             document.getElementById('edit_id').value = user.id_usuario;
             document.getElementById('edit_name').value = user.nome;
@@ -180,8 +189,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             document.getElementById('edit_senha').value = user.senha;
             document.getElementById('edit_admin').value = user.admin;
             document.getElementById('edit_cargo').value = user.cargo;
-            document.getElementById('editForm').style.display = 'block';
-            window.scrollTo(0, document.getElementById('editForm').offsetTop);
+            document.getElementById('editForm').style.display = 'block'; // Exibe o formulário de edição
+            window.scrollTo(0, document.getElementById('editForm').offsetTop); // Rola a página para o formulário
         }
     </script>
 </body>

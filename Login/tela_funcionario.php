@@ -20,7 +20,7 @@ $stmt->fetch();
 $stmt->close();
 
 // Contar agendamentos do dia
-$sql_agendamentos = "SELECT COUNT(*) FROM agendamento WHERE dt_agenda = CURDATE()";
+$sql_agendamentos = "SELECT COUNT(*) FROM agendamento ";
 $result_agendamentos = $mysqli->query($sql_agendamentos);
 $num_agendamentos = $result_agendamentos->fetch_row()[0];
 
@@ -30,7 +30,7 @@ $result_pacientes = $mysqli->query($sql_pacientes);
 $num_pacientes = $result_pacientes->fetch_row()[0];
 
 // Contar tarefas pendentes (simulação, ajuste conforme necessário)
-$sql_tarefas = "SELECT COUNT(*) FROM agendamento WHERE realizado = 'N' AND dt_agenda = CURDATE()";
+$sql_tarefas = "SELECT COUNT(*) FROM agendamento WHERE realizado = 'N'";
 $result_tarefas = $mysqli->query($sql_tarefas);
 $num_tarefas = $result_tarefas->fetch_row()[0];
 

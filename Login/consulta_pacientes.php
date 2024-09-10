@@ -19,15 +19,26 @@ if (isset($_POST['update'])) {
     }
 }
 
-// Exclusão dos Dados
+/// Exclusão dos Dados
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
 
-    $sql = "DELETE FROM paciente WHERE id_paciente=$id";
-    if ($mysqli->query($sql) === TRUE) {
-        echo "<script>alert('Paciente deletado com sucesso'); window.location.href='consulta_pacientes.php';</script>";
+    // Verificar se o paciente tem consultas agendadas
+    $checkConsultas = "SELECT COUNT(*) as count FROM agendamento WHERE id_paciente=$id";
+    $result = $mysqli->query($checkConsultas);
+    $row = $result->fetch_assoc();
+
+    if ($row['count'] > 0) {
+        // Se houver consultas agendadas, exibir mensagem de erro
+        echo "<script>alert('Não é possível deletar o paciente porque ele tem consultas agendadas.'); window.location.href='consulta_pacientes.php';</script>";
     } else {
-        echo "<script>alert('Erro ao deletar paciente: " . $mysqli->error . "'); window.location.href='consulta_pacientes.php';</script>";
+        // Caso contrário, excluir o paciente
+        $sql = "DELETE FROM paciente WHERE id_paciente=$id";
+        if ($mysqli->query($sql) === TRUE) {
+            echo "<script>alert('Paciente deletado com sucesso'); window.location.href='consulta_pacientes.php';</script>";
+        } else {
+            echo "<script>alert('Erro ao deletar paciente: " . $mysqli->error . "'); window.location.href='consulta_pacientes.php';</script>";
+        }
     }
 }
 
@@ -87,7 +98,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                                     <input type='hidden' name='dt_nascimento' value='" . $row["dt_nascimento"] . "'>
                                     <input type='hidden' name='telefone' value='" . $row["telefone"] . "'>
                                     <input type='hidden' name='sexo' value='" . $row["sexo"] . "'>
-                                    <button type='button' class='btn btn-primary' onclick='editPatient(this)'>Editar</button>
+                                   <button type='button' class='btn btn-primary' onclick='editPatient(this)'>Editar</button>
+
                                 </form>
                                 <form style='display:inline;' method='get' action='consulta_pacientes.php'>
                                     <input type='hidden' name='delete' value='" . $row["id_paciente"] . "'>
@@ -148,17 +160,19 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
         </div>
     </div>
     <script>
-        function editPatient(button) {
-            var form = button.closest('form');
-            document.getElementById('edit_id').value = form.querySelector('').value;
-            document.getElementById('edit_nome').value = form.querySelector('[name[name="id"]="nome"]').value;
-            document.getElementById('edit_cpf').value = form.querySelector('[name="cpf"]').value;
-            document.getElementById('edit_dt_nascimento').value = form.querySelector('[name="dt_nascimento"]').value;
-            document.getElementById('edit_telefone').value = form.querySelector('[name="telefone"]').value;
-            document.getElementById('edit_sexo').value = form.querySelector('[name="sexo"]').value;
-            document.getElementById('editForm').style.display = 'block';
-            window.scrollTo(0, document.getElementById('editForm').offsetTop);
-        }
+       function editPatient(button) {
+    var form = button.closest('form');
+    document.getElementById('edit_id').value = form.querySelector('[name="id"]').value;
+    document.getElementById('edit_nome').value = form.querySelector('[name="nome"]').value;
+    document.getElementById('edit_cpf').value = form.querySelector('[name="cpf"]').value;
+    document.getElementById('edit_dt_nascimento').value = form.querySelector('[name="dt_nascimento"]').value;
+    document.getElementById('edit_telefone').value = form.querySelector('[name="telefone"]').value;
+    document.getElementById('edit_sexo').value = form.querySelector('[name="sexo"]').value;
+    document.getElementById('editForm').style.display = 'block';
+    window.scrollTo(0, document.getElementById('editForm').offsetTop);
+}
+
     </script>
+
 </body>
 </html>
